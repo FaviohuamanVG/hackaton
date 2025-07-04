@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de RUC/DNI - API Peru</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .result-container {
+            margin-top: 20px;
+        }
+        .nav-tabs .nav-link {
+            font-weight: 500;
+        }
+        .tab-content {
+            padding-top: 1.5rem;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .logo {
+            max-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="logo-container">
+            <h1 class="text-primary mb-3">APIs Perú</h1>
+            <p class="text-muted">Consulta de RUC y DNI en tiempo real</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active text-white" id="ruc-tab" data-bs-toggle="tab" data-bs-target="#ruc" type="button" role="tab" aria-controls="ruc" aria-selected="true">Consulta RUC</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link text-white" id="dni-tab" data-bs-toggle="tab" data-bs-target="#dni" type="button" role="tab" aria-controls="dni" aria-selected="false">Consulta DNI</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="myTabContent">
+                            <!-- RUC Tab -->
+                            <div class="tab-pane fade show active" id="ruc" role="tabpanel" aria-labelledby="ruc-tab">
+                                <form id="rucForm">
+                                    <div class="mb-3">
+                                        <label for="rucInput" class="form-label">Ingrese el número de RUC:</label>
+                                        <input type="text" class="form-control" id="rucInput" placeholder="Ej: 20131312955" maxlength="11" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Consultar RUC</button>
+                                </form>
+
+                                <div class="result-container d-none" id="rucResultContainer">
+                                    <hr>
+                                    <h4>Resultado de la consulta RUC:</h4>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>RUC</th>
+                                                <td id="rucResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Razón Social</th>
+                                                <td id="razonSocialResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Condición</th>
+                                                <td id="condicionResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Estado</th>
+                                                <td id="estadoResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Dirección</th>
+                                                <td id="direccionResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Departamento</th>
+                                                <td id="departamentoResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Provincia</th>
+                                                <td id="provinciaResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Distrito</th>
+                                                <td id="distritoResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Eliminado</th>
+                                                <td id="eliminadoResult"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <div class="mt-3">
+                                        <h5>Operaciones de Eliminado Lógico:</h5>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-success" id="activarBtn">Activar RUC</button>
+                                            <button type="button" class="btn btn-danger" id="desactivarBtn">Desactivar RUC</button>
+                                            <button type="button" class="btn btn-info" id="estadoBtn">Ver Estado</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- DNI Tab -->
+                            <div class="tab-pane fade" id="dni" role="tabpanel" aria-labelledby="dni-tab">
+                                <form id="dniForm">
+                                    <div class="mb-3">
+                                        <label for="dniInput" class="form-label">Ingrese el número de DNI:</label>
+                                        <input type="text" class="form-control" id="dniInput" placeholder="Ej: 12345678" maxlength="8" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Consultar DNI</button>
+                                </form>
+
+                                <div class="result-container d-none" id="dniResultContainer">
+                                    <hr>
+                                    <h4>Resultado de la consulta DNI:</h4>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>DNI</th>
+                                                <td id="dniResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Nombres</th>
+                                                <td id="nombresResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Apellido Paterno</th>
+                                                <td id="apellidoPaternoResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Apellido Materno</th>
+                                                <td id="apellidoMaternoResult"></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Código de Verificación</th>
+                                                <td id="codVerificaResult"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Información</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Consulta RUC:</strong> El RUC debe tener 11 dígitos y ser válido según los criterios de SUNAT.</p>
+                        <p><strong>Consulta DNI:</strong> El DNI debe tener 8 dígitos y ser válido según los criterios de RENIEC.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentRuc = '';
+
+        document.getElementById('rucForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const ruc = document.getElementById('rucInput').value.trim();
+            
+            if(ruc.length !== 11 || !/^\d+$/.test(ruc)) {
+                alert('Por favor, ingrese un RUC válido de 11 dígitos');
+                return;
+            }
+
+            currentRuc = ruc;
+
+            // Show loading state
+            const button = e.target.querySelector('button');
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Consultando...';
+            
+            // Make API request
+            fetch(`/api/ruc/${ruc}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayRucData(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al consultar el RUC. Por favor, inténtelo de nuevo.');
+                })
+                .finally(() => {
+                    // Restore button state
+                    button.disabled = false;
+                    button.textContent = originalText;
+                });
+        });
+
+        function displayRucData(data) {
+            document.getElementById('rucResultContainer').classList.remove('d-none');
+            document.getElementById('rucResult').textContent = data.ruc || '-';
+            document.getElementById('razonSocialResult').textContent = data.razonSocial || '-';
+            document.getElementById('condicionResult').textContent = data.condicion || '-';
+            document.getElementById('estadoResult').textContent = data.estado || '-';
+            document.getElementById('direccionResult').textContent = data.direccion || '-';
+            document.getElementById('departamentoResult').textContent = data.departamento || '-';
+            document.getElementById('provinciaResult').textContent = data.provincia || '-';
+            document.getElementById('distritoResult').textContent = data.distrito || '-';
+            document.getElementById('eliminadoResult').textContent = data.eliminado ? 'Sí' : 'No';
+        }
+
+        // Activar RUC
+        document.getElementById('activarBtn').addEventListener('click', function() {
+            if (!currentRuc) {
+                alert('Primero debe consultar un RUC');
+                return;
+            }
+            
+            fetch(`/api/ruc/${currentRuc}/activar`, {
+                method: 'PATCH'
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayRucData(data);
+                alert('RUC activado exitosamente');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al activar el RUC');
+            });
+        });
+
+        // Desactivar RUC
+        document.getElementById('desactivarBtn').addEventListener('click', function() {
+            if (!currentRuc) {
+                alert('Primero debe consultar un RUC');
+                return;
+            }
+            
+            fetch(`/api/ruc/${currentRuc}/desactivar`, {
+                method: 'PATCH'
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayRucData(data);
+                alert('RUC desactivado exitosamente');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al desactivar el RUC');
+            });
+        });
+
+        // Ver Estado RUC
+        document.getElementById('estadoBtn').addEventListener('click', function() {
+            if (!currentRuc) {
+                alert('Primero debe consultar un RUC');
+                return;
+            }
+            
+            fetch(`/api/ruc/${currentRuc}/estado`)
+            .then(response => response.json())
+            .then(data => {
+                displayRucData(data);
+                alert('Estado del RUC actualizado');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al consultar el estado del RUC');
+            });
+        });
+
+        document.getElementById('dniForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const dni = document.getElementById('dniInput').value.trim();
+            
+            if(dni.length !== 8 || !/^\d+$/.test(dni)) {
+                alert('Por favor, ingrese un DNI válido de 8 dígitos');
+                return;
+            }
+
+            // Show loading state
+            const button = e.target.querySelector('button');
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Consultando...';
+            
+            // Make API request
+            fetch(`/api/dni/${dni}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('dniResultContainer').classList.remove('d-none');
+                    document.getElementById('dniResult').textContent = data.dni || '-';
+                    document.getElementById('nombresResult').textContent = data.nombres || '-';
+                    document.getElementById('apellidoPaternoResult').textContent = data.apellidoPaterno || '-';
+                    document.getElementById('apellidoMaternoResult').textContent = data.apellidoMaterno || '-';
+                    document.getElementById('codVerificaResult').textContent = data.codVerifica || '-';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al consultar el DNI. Por favor, inténtelo de nuevo.');
+                })
+                .finally(() => {
+                    // Restore button state
+                    button.disabled = false;
+                    button.textContent = originalText;
+                });
+        });
+    </script>
+</body>
+</html>
